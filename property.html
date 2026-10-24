@@ -12,6 +12,8 @@
     .property-thumbs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
     .property-thumb{width:90px;height:70px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;flex:0 0 auto}
     .property-thumb.active{border-color:#c8a95b}
+    .video-section{margin-top:22px}.video-section h2{margin-bottom:10px}
+    .video-frame{width:100%;aspect-ratio:16/9;border:0;border-radius:12px;display:block}
   </style>
 </head>
 <body>
@@ -32,6 +34,19 @@
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
     const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+    function youtubeId(value) {
+      try {
+        const u = new URL(String(value || '').trim());
+        if (u.hostname.includes('youtu.be')) return u.pathname.split('/').filter(Boolean)[0] || null;
+        if (u.hostname.includes('youtube.com')) {
+          if (u.pathname === '/watch') return u.searchParams.get('v');
+          if (u.pathname.startsWith('/shorts/')) return u.pathname.split('/')[2] || null;
+          if (u.pathname.startsWith('/embed/')) return u.pathname.split('/')[2] || null;
+        }
+      } catch (_) {}
+      return null;
+    }
+
     async function load() {
       const slug = new URLSearchParams(location.search).get('slug');
       const { data:p, error } = await sb.from('properties').select('*').eq('slug', slug).eq('status', 'available').maybeSingle();
@@ -46,6 +61,12 @@
       const images = Array.isArray(p.image_urls) && p.image_urls.length
         ? p.image_urls
         : ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80'];
+      const videoId = youtubeId(p.youtube_url);
+      const videoHtml = videoId ? `
+        <section class="video-section">
+          <h2>Property Video</h2>
+          <iframe class="video-frame" src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}" title="${esc(p.title)} property video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+        </section>` : '';
 
       detail.innerHTML = `
         <p class="eyebrow">${esc(p.property_type)} · ${esc(p.location)}</p>
@@ -65,7 +86,8 @@
             <a class="btn" href="https://wa.me/919786619196?text=${encodeURIComponent('I am interested in '+p.title)}">Enquire on WhatsApp</a>
             <a class="btn ghost" style="color:#19352b;border-color:#19352b" href="tel:+919786619196">Call 9786619196</a>
           </div>
-        </div>`;
+        </div>
+        ${videoHtml}`;
 
       document.querySelectorAll('.property-thumb').forEach(thumb => {
         thumb.addEventListener('click', () => {
