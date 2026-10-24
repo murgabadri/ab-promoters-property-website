@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://murgabadri.github.io/ab-promoters-property-website/sitemap.xml
