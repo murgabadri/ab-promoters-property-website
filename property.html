@@ -1,1 +1,82 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Property | AB Promoters and Developers</title><meta name="description" content="Property listing by AB Promoters and Developers."><link rel="stylesheet" href="styles.css"></head><body><header class="top"><div class="wrap nav"><a class="brand" href="index.html">AB <span>Promoters & Developers</span></a><nav><a href="properties.html">All Properties</a><a class="btn small" href="https://wa.me/919786619196">WhatsApp</a></nav></div></header><main class="wrap section" id="detail"><p class="muted">Loading property…</p></main><footer><div class="wrap footer"><strong>AB Promoters and Developers</strong><span>9786619196 · 7904473899</span></div></footer><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>const sb=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));async function load(){const slug=new URLSearchParams(location.search).get('slug');const {data:p,error}=await sb.from('properties').select('*').eq('slug',slug).eq('status','available').maybeSingle();if(error||!p){detail.innerHTML='<h1>Property not found</h1><a class="btn" href="properties.html">Browse properties</a>';return}document.title=p.title+' | AB Promoters and Developers';detail.innerHTML=`<p class="eyebrow">${esc(p.property_type)} · ${esc(p.location)}</p><h1>${esc(p.title)}</h1><p class="lead">${esc(p.description||'Contact us for complete property details.')}</p><div class="card" style="max-width:850px"><img src="${esc(p.image_urls?.[0]||'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80')}" style="width:100%;max-height:520px;object-fit:cover"><div class="card-body"><p><b>Location:</b> ${esc(p.location)}</p><p><b>Area:</b> ${esc(p.area||'On request')}</p><p><b>Price:</b> ${esc(p.price||'On request')}</p><a class="btn" href="https://wa.me/919786619196?text=${encodeURIComponent('I am interested in '+p.title)}">Enquire on WhatsApp</a> <a class="btn ghost" style="color:#19352b;border-color:#19352b" href="tel:+919786619196">Call 9786619196</a></div></div>`}load();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Property | AB Promoters and Developers</title>
+  <meta name="description" content="Property listing by AB Promoters and Developers.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .property-gallery{display:grid;gap:10px}
+    .property-main-image{width:100%;max-height:520px;object-fit:cover;border-radius:12px}
+    .property-thumbs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+    .property-thumb{width:90px;height:70px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;flex:0 0 auto}
+    .property-thumb.active{border-color:#c8a95b}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">AB <span>Promoters & Developers</span></a>
+      <nav><a href="properties.html">All Properties</a><a class="btn small" href="https://wa.me/919786619196">WhatsApp</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap section" id="detail"><p class="muted">Loading property…</p></main>
+
+  <footer><div class="wrap footer"><strong>AB Promoters and Developers</strong><span>9786619196 · 7904473899</span></div></footer>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    async function load() {
+      const slug = new URLSearchParams(location.search).get('slug');
+      const { data:p, error } = await sb.from('properties').select('*').eq('slug', slug).eq('status', 'available').maybeSingle();
+
+      if (error || !p) {
+        detail.innerHTML = '<h1>Property not found</h1><a class="btn" href="properties.html">Browse properties</a>';
+        return;
+      }
+
+      document.title = p.title + ' | AB Promoters and Developers';
+
+      const images = Array.isArray(p.image_urls) && p.image_urls.length
+        ? p.image_urls
+        : ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80'];
+
+      detail.innerHTML = `
+        <p class="eyebrow">${esc(p.property_type)} · ${esc(p.location)}</p>
+        <h1>${esc(p.title)}</h1>
+        <p class="lead">${esc(p.description || 'Contact us for complete property details.')}</p>
+        <div class="card" style="max-width:850px">
+          <div class="card-body">
+            <div class="property-gallery">
+              <img id="mainPropertyImage" class="property-main-image" src="${esc(images[0])}" alt="${esc(p.title)}">
+              ${images.length > 1 ? `<div class="property-thumbs">${images.map((url,i)=>`<img class="property-thumb ${i===0?'active':''}" src="${esc(url)}" alt="${esc(p.title)} image ${i+1}" data-image="${esc(url)}">`).join('')}</div>` : ''}
+            </div>
+          </div>
+          <div class="card-body">
+            <p><b>Location:</b> ${esc(p.location)}</p>
+            <p><b>Area:</b> ${esc(p.area || 'On request')}</p>
+            <p><b>Price:</b> ${esc(p.price || 'On request')}</p>
+            <a class="btn" href="https://wa.me/919786619196?text=${encodeURIComponent('I am interested in '+p.title)}">Enquire on WhatsApp</a>
+            <a class="btn ghost" style="color:#19352b;border-color:#19352b" href="tel:+919786619196">Call 9786619196</a>
+          </div>
+        </div>`;
+
+      document.querySelectorAll('.property-thumb').forEach(thumb => {
+        thumb.addEventListener('click', () => {
+          document.querySelector('#mainPropertyImage').src = thumb.dataset.image;
+          document.querySelectorAll('.property-thumb').forEach(t => t.classList.remove('active'));
+          thumb.classList.add('active');
+        });
+      });
+    }
+
+    load();
+  </script>
+</body>
+</html>
