@@ -11,7 +11,7 @@
 #imagePreview img,#existingImages img{width:100%;height:90px;object-fit:cover;border-radius:8px;border:1px solid #ddd}
 .image-item{position:relative}.image-item small{display:block;font-size:11px;margin-top:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.upload-status{font-size:14px;margin:8px 0}
 .admin-list{display:grid;gap:12px;margin:20px 0 28px}.property-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:15px;border:1px solid #ddd;border-radius:12px;background:#fff}.property-row img{width:90px;height:65px;object-fit:cover;border-radius:8px}.property-info{display:flex;align-items:center;gap:12px;min-width:0}.property-info div{min-width:0}.property-info strong{display:block}.property-info span{font-size:13px;color:#666}.edit-actions{display:flex;gap:8px;flex-wrap:wrap}.danger{border-color:#b55;color:#a22}.form-title{display:flex;justify-content:space-between;align-items:center;gap:10px}.hidden{display:none!important}
-.video-help{font-size:13px;color:#666;margin:-4px 0 12px}.video-badge{font-size:12px;color:#8a6a16;margin-left:6px}
+.video-help{font-size:13px;color:#666;margin:-4px 0 12px}.video-badge{font-size:12px;color:#8a6a16;margin-left:6px}.admin-tools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}
 </style>
 </head>
 <body>
@@ -20,6 +20,7 @@
 <p class="eyebrow">PRIVATE ADMIN AREA</p><h1>Property Management</h1>
 <div id="login"><p>Sign in with your Supabase admin account.</p><input id="email" type="email" placeholder="Admin email"><input id="password" type="password" placeholder="Password"><button class="btn" id="loginBtn" type="button">Sign in</button><p id="msg" class="muted"></p></div>
 <div id="panel" hidden>
+<div class="admin-tools"><a class="btn" href="customers.html">Customer Management & Follow-ups</a></div>
 <section><div class="form-title"><h2 id="formHeading">Add Property</h2><button class="btn ghost hidden" id="cancelEdit" type="button">Cancel edit</button></div>
 <form id="form">
 <input name="title" placeholder="Property title" required>
